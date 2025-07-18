@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP (Model Context Protocol) Presentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            overflow: hidden;
+        }
+
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide {
+            width: 90%;
+            max-width: 1200px;
+            height: 80vh;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 60px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        .slide h1 {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #fff, #e0e0e0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .slide h2 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            color: #ffeb3b;
+        }
+
+        .slide h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #81c784;
+        }
+
+        .slide p {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .slide ul {
+            text-align: left;
+            margin: 0 auto;
+            display: inline-block;
+            font-size: 1.3rem;
+            line-height: 2;
+        }
+
+        .slide li {
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .slide li::before {
+            content: "→";
+            position: absolute;
+            left: -1rem;
+            color: #81c784;
+            font-weight: bold;
+        }
+
+        .navigation {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .slide-counter {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .diagram {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 30px 0;
+        }
+
+        .diagram-box {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .diagram-arrow {
+            font-size: 2rem;
+            color: #81c784;
+        }
+
+        .highlight {
+            background: rgba(255, 235, 59, 0.3);
+            padding: 4px 8px;
+            border-radius: 5px;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .slide-content {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .slide-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .slide-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .slide-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .benefit-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .benefit-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div class="slide-counter">
+            <span id="current-slide">1</span> / <span id="total-slides">12</span>
+        </div>
+
+        <!-- Slide 1: Title -->
+        <div class="slide active">
+            <h1>MCP</h1>
+            <h2>Model Context Protocol</h2>
+            <p>Connecting AI Models to the World</p>
+            <br>
+            <p style="font-size: 1.2rem; opacity: 0.8;">A standardized protocol for AI-tool integration</p>
+        </div>
+
+        <!-- Slide 2: What is MCP? -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>What is MCP?</h2>
+                <p>Model Context Protocol is a <span class="highlight">standardized communication protocol</span> that enables AI models to interact with external tools and services.</p>
+                <br>
+                <div class="diagram">
+                    <div class="diagram-box">
+                        <strong>AI Model</strong><br>
+                        (Claude, GPT, etc.)
+                    </div>
+                    <div class="diagram-arrow">↔</div>
+                    <div class="diagram-box">
+                        <strong>MCP</strong><br>
+                        Protocol
+                    </div>
+                    <div class="diagram-arrow">↔</div>
+                    <div class="diagram-box">
+                        <strong>External Tools</strong><br>
+                        (APIs, Files, DBs)
+                    </div>
+                </div>
+                <p>Think of it as a <span class="highlight">universal translator</span> between AI and the digital world.</p>
+            </div>
+        </div>
+
+        <!-- Slide 3: The Problem MCP Solves -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>The Problem MCP Solves</h2>
+                <h3>Before MCP:</h3>
+                <ul>
+                    <li>AI models were isolated from real-world data</li>
+                    <li>No standardized way to add new capabilities</li>
+                    <li>Each integration required custom development</li>
+                    <li>Security and permission management was complex</li>
+                    <li>Limited to training data cutoffs</li>
+                </ul>
+                <br>
+                <h3>After MCP:</h3>
+                <ul>
+                    <li>Standardized protocol for tool integration</li>
+                    <li>Secure, controlled access to external resources</li>
+                    <li>Real-time data access and processing</li>
+                    <li>Extensible architecture for new capabilities</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 4: Core Architecture -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Core Architecture</h2>
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">👤</div>
+                        <h3>Client</h3>
+                        <p>The application using the AI model (like Claude interface)</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🛠️</div>
+                        <h3>Server</h3>
+                        <p>Service providing tools and capabilities to the AI</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🌐</div>
+                        <h3>Transport</h3>
+                        <p>Communication layer moving messages between client and server</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon">⚡</div>
+                        <h3>Tools</h3>
+                        <p>Functions that servers provide (file ops, API calls, etc.)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Transport Types -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Transport Types</h2>
+                <h3>Stdio Transport</h3>
+                <ul>
+                    <li>Local communication (same machine)</li>
+                    <li>Uses standard input/output streams</li>
+                    <li>Full bidirectional communication</li>
+                    <li>Best for development and local tools</li>
+                </ul>
+                <br>
+                <h3>StreamableHTTP Transport</h3>
+                <ul>
+                    <li>Remote communication over HTTP</li>
+                    <li>Enables publicly accessible servers</li>
+                    <li>Uses Server-Sent Events (SSE) for bidirectional messaging</li>
+                    <li>More complex but enables cloud deployment</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 6: Message Types -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Message Types</h2>
+                <h3>Request/Result Pairs</h3>
+                <ul>
+                    <li>Always come together (request → result)</li>
+                    <li>Examples: call_tool_request, initialize_request</li>
+                </ul>
+                <br>
+                <h3>Notifications</h3>
+                <ul>
+                    <li>Events that don't need responses</li>
+                    <li>Examples: progress updates, logging messages</li>
+                </ul>
+                <br>
+                <div class="code-block">
+{
+  "method": "call_tool_request",
+  "params": {
+    "tool_name": "read_file",
+    "arguments": { "path": "/example.txt" }
+  },
+  "id": "123"
+}
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Key Features -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Key Features</h2>
+                <h3>🔒 Security & Permissions</h3>
+                <ul>
+                    <li><strong>Roots:</strong> Controlled access to specific files/folders</li>
+                    <li>Permission-based tool access</li>
+                    <li>Secure communication protocols</li>
+                </ul>
+                <br>
+                <h3>📊 Real-time Feedback</h3>
+                <ul>
+                    <li><strong>Progress Notifications:</strong> Live updates during tool execution</li>
+                    <li><strong>Logging:</strong> Real-time feedback for debugging</li>
+                </ul>
+                <br>
+                <h3>🔄 Sampling</h3>
+                <ul>
+                    <li>Servers can request text generation from clients</li>
+                    <li>Eliminates need for servers to handle API keys</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 8: Roots System -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Roots System</h2>
+                <h3>Problem:</h3>
+                <p>User says "convert video.mp4" but AI can't locate file without full path</p>
+                <br>
+                <h3>Solution:</h3>
+                <div class="diagram">
+                    <div class="diagram-box">
+                        <strong>User grants access</strong><br>
+                        /home/user/videos/
+                    </div>
+                    <div class="diagram-arrow">→</div>
+                    <div class="diagram-box">
+                        <strong>AI can explore</strong><br>
+                        and find files
+                    </div>
+                </div>
+                <br>
+                <h3>Three Essential Tools:</h3>
+                <ul>
+                    <li><strong>ListRoots:</strong> Show available access areas</li>
+                    <li><strong>ReadDirectory:</strong> List files in directories</li>
+                    <li><strong>ConvertVideo:</strong> Perform the actual operation</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 9: HTTP Transport Challenges -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>HTTP Transport Challenges</h2>
+                <h3>The Problem:</h3>
+                <p>HTTP is naturally <span class="highlight">unidirectional</span> (client → server)</p>
+                <p>But MCP needs <span class="highlight">bidirectional</span> communication</p>
+                <br>
+                <h3>The Solution:</h3>
+                <ul>
+                    <li><strong>Server-Sent Events (SSE)</strong> for server → client messages</li>
+                    <li><strong>Session IDs</strong> to track connections</li>
+                    <li><strong>Two SSE connections:</strong> long-lived for notifications, short-lived for responses</li>
+                </ul>
+                <br>
+                <h3>Configuration Flags:</h3>
+                <ul>
+                    <li><strong>stateless=true:</strong> For horizontal scaling (breaks some features)</li>
+                    <li><strong>JSON response=true:</strong> Disables streaming (simpler but less interactive)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 10: Real-World Examples -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Real-World Examples</h2>
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">📁</div>
+                        <h3>File Management</h3>
+                        <p>Read, write, and organize files on your computer</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🗄️</div>
+                        <h3>Database Access</h3>
+                        <p>Query and update databases in real-time</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🌐</div>
+                        <h3>API Integration</h3>
+                        <p>Call web APIs and process live data</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🎥</div>
+                        <h3>Media Processing</h3>
+                        <p>Convert videos, process images, handle multimedia</p>
+                    </div>
+                </div>
+                <br>
+                <p>Instead of being limited to training data, AI can work with <span class="highlight">current, live information</span>!</p>
+            </div>
+        </div>
+
+        <!-- Slide 11: Benefits -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>Benefits of MCP</h2>
+                <h3>🚀 For Developers</h3>
+                <ul>
+                    <li>Standardized protocol reduces development complexity</li>
+                    <li>Reusable servers across different AI applications</li>
+                    <li>Built-in security and permission management</li>
+                </ul>
+                <br>
+                <h3>🤖 For AI Models</h3>
+                <ul>
+                    <li>Access to real-time data and capabilities</li>
+                    <li>Extensible functionality without retraining</li>
+                    <li>Secure interaction with external resources</li>
+                </ul>
+                <br>
+                <h3>👥 For Users</h3>
+                <ul>
+                    <li>More capable AI assistants</li>
+                    <li>Controlled access to personal data</li>
+                    <li>Seamless integration with existing tools</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Slide 12: Conclusion -->
+        <div class="slide">
+            <div class="slide-content">
+                <h2>The Future with MCP</h2>
+                <p>MCP transforms AI from <span class="highlight">isolated models</span> to <span class="highlight">connected assistants</span> that can:</p>
+                <br>
+                <ul>
+                    <li>Work with your live data and applications</li>
+                    <li>Perform real-world tasks securely</li>
+                    <li>Extend capabilities through standardized tools</li>
+                    <li>Maintain privacy and security boundaries</li>
+                </ul>
+                <br>
+                <h3>🎯 Key Takeaway</h3>
+                <p>MCP is the bridge between AI intelligence and real-world utility, enabling truly <span class="highlight">productive AI assistants</span>.</p>
+                <br>
+                <p style="font-size: 1.5rem; font-weight: bold; color: #81c784;">Thank you!</p>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn" id="prev-btn" onclick="previousSlide()">← Previous</button>
+            <button class="nav-btn" id="next-btn" onclick="nextSlide()">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+
+        document.getElementById('total-slides').textContent = totalSlides;
+
+        function showSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + totalSlides) % totalSlides;
+            slides[currentSlide].classList.add('active');
+            
+            document.getElementById('current-slide').textContent = currentSlide + 1;
+            
+            // Update navigation buttons
+            document.getElementById('prev-btn').disabled = currentSlide === 0;
+            document.getElementById('next-btn').disabled = currentSlide === totalSlides - 1;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function previousSlide() {
+            if (currentSlide > 0) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight' || event.key === ' ') {
+                nextSlide();
+            } else if (event.key === 'ArrowLeft') {
+                previousSlide();
+            }
+        });
+
+        // Initialize
+        showSlide(0);
+    </script>
+</body>
+</html>
