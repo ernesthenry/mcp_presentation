@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP Overview - Agenda</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .slide {
+            width: 1200px;
+            height: 800px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #1e3c72, #2a5298, #4a90e2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .title {
+            font-size: 42px;
+            font-weight: 700;
+            color: #1e3c72;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            font-size: 24px;
+            color: #4a90e2;
+            font-weight: 400;
+            margin-bottom: 20px;
+        }
+
+        .divider {
+            width: 120px;
+            height: 4px;
+            background: linear-gradient(90deg, #1e3c72, #4a90e2);
+            margin: 0 auto;
+            border-radius: 2px;
+        }
+
+        .agenda {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .agenda-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 35px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f8fbff 0%, #e3f2fd 100%);
+            border-radius: 15px;
+            border-left: 6px solid #4a90e2;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .agenda-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 8px 25px rgba(74, 144, 226, 0.2);
+        }
+
+        .agenda-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e3c72;
+            margin-right: 25px;
+            min-width: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 50px;
+            width: 50px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(30, 60, 114, 0.2);
+        }
+
+        .agenda-content {
+            flex: 1;
+        }
+
+        .agenda-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1e3c72;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .agenda-description {
+            font-size: 16px;
+            color: #5a7eb8;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .highlight {
+            color: #4a90e2;
+            font-weight: 600;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 30px;
+            right: 60px;
+            font-size: 14px;
+            color: #8fa8d4;
+        }
+
+        .decorative-element {
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(45deg, rgba(74, 144, 226, 0.1), rgba(30, 60, 114, 0.05));
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .decorative-element-2 {
+            position: absolute;
+            bottom: -150px;
+            left: -150px;
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, rgba(74, 144, 226, 0.05), rgba(30, 60, 114, 0.1));
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide">
+        <div class="decorative-element"></div>
+        <div class="decorative-element-2"></div>
+        
+        <div class="content-wrapper">
+            <div class="header">
+                <h1 class="title">Model Context Protocol</h1>
+                <p class="subtitle">Session Agenda</p>
+                <div class="divider"></div>
+            </div>
+
+            <div class="agenda">
+                <div class="agenda-item">
+                    <div class="agenda-number">1</div>
+                    <div class="agenda-content">
+                        <h3 class="agenda-title">Overview of <span class="highlight">MCP</span></h3>
+                        <p class="agenda-description">Understand what problems it intends to solve</p>
+                    </div>
+                </div>
+
+                <div class="agenda-item">
+                    <div class="agenda-number">2</div>
+                    <div class="agenda-content">
+                        <h3 class="agenda-title"><span class="highlight">MCP Clients</span> and <span class="highlight">Servers</span></h3>
+                        <p class="agenda-description">Servers host tools, resources and more. Clients use servers</p>
+                    </div>
+                </div>
+
+                <div class="agenda-item">
+                    <div class="agenda-number">3</div>
+                    <div class="agenda-content">
+                        <h3 class="agenda-title"><span class="highlight">Tools</span></h3>
+                        <p class="agenda-description">Tools are implemented on the server and extend an LLM's capabilities</p>
+                    </div>
+                </div>
+
+                <div class="agenda-item">
+                    <div class="agenda-number">4</div>
+                    <div class="agenda-content">
+                        <h3 class="agenda-title"><span class="highlight">Resources</span></h3>
+                        <p class="agenda-description">Servers can deliver any kind of document or information to clients</p>
+                    </div>
+                </div>
+
+                <div class="agenda-item">
+                    <div class="agenda-number">5</div>
+                    <div class="agenda-content">
+                        <h3 class="agenda-title"><span class="highlight">Prompts</span></h3>
+                        <p class="agenda-description">Servers can provide clients with preoptimized prompts</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            Model Context Protocol Overview
+        </div>
+    </div>
+</body>
+</html>
